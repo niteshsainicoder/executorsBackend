@@ -1,0 +1,61 @@
+# Node.js
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Docker
+docker-compose.override.yml
+*.dockerfile
+docker-compose.yml
+
+# Executors
+executors/javascript/node_modules/
+executors/python/__pycache__/
+
+# Build and Output Directories
+dist/
+build/
+out/
+*.log
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.swp
+*.swo
+*.vscode
+
+# Miscellaneous
+*.sublime-workspace
+*.sublime-project
+*.tmp
+*.bak
+*.swp
+*.swo
+*.pid
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+*.class
+
+# .env files and other sensitive data
+.env
+.env.*.local
+config/secrets.yml

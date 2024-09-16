@@ -1,0 +1,24 @@
+{
+  "name": "remotecodebackend",
+  "version": "1.0.0",
+  "description": "I am very Eager to try my full stack online code editor app with next js and express,mongoose,body-parser,jsonwebtoken,bcrypt and many more ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": " node index.js"
+  },
+  "author": "Nitesh Saini",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
