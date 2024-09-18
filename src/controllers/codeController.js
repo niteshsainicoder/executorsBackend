@@ -1,83 +1,37 @@
-import fs from "fs";
-import path from "path";
-import { exec } from "child_process";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import { exec } from 'child_process';
+import { promises as fs } from 'fs';
+import path from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const TEMP_DIR = path.join(process.cwd(), 'temp');
 
-export const executeCode = async (req, res) => {
-  console.time("Execution Time");
-  const { codeContent, language } = req.body;
+// Ensure the temp directory exists
+fs.mkdir(TEMP_DIR, { recursive: true }).catch(console.error);
 
-  if (!codeContent) {
-    return res
-      .status(400)
-      .json({ message: "Please provide code", error: true });
-  }
-
-  try {
-    let extension;
-    let dockerCommand;
-
-    switch (language) {
-      case "python":
-        extension = "py";
-        dockerCommand = "python3 /usr/src/app/scripts/script.py";
-        break;
-      case "javascript":
-        extension = "js";
-        dockerCommand = "node /usr/src/app/scripts/script.js";
-        break;
-      default:
-        return res
-          .status(400)
-          .json({ message: "Unsupported language", error: true });
+const executeCode = async (language, code) => {
+    if (typeof code !== 'string' || !code.trim()) {
+        throw new Error('Code is required and must be a non-empty string');
     }
 
-    const scriptPath = path.join(
-      __dirname,
-      "..",
-      "executors",
-      language,
-      "scripts",
-      `script.${extension}`
-    );
-    const scriptDir = path.dirname(scriptPath);
+    // Create a temporary file with the code
+    const tempFile = path.join(TEMP_DIR, `temp.${language === 'python' ? 'py' : 'js'}`);
+    await fs.writeFile(tempFile, code);
 
-    // Ensure directory exists
-    if (!fs.existsSync(scriptDir)) {
-      fs.mkdirSync(scriptDir, { recursive: true });
-    }
+    // Define the command based on the language
+    const command = language === 'python' ? `python ${tempFile}` : `node ${tempFile}`;
 
-    // Write the code to the file
-    await fs.promises.writeFile(scriptPath, codeContent);
+    // Return a promise that resolves with the command output
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('Execution timed out')), 10000); // 10 seconds timeout
 
-    // Define the Docker command
-    const command = `docker run --rm -v ${scriptDir}:/usr/src/app/scripts --memory="500m" --memory-swap="1g" --cpus="2.0" ${language}-executor ${dockerCommand}`;
+        exec(command, (error, stdout, stderr) => {
+            clearTimeout(timeout);
 
-    // Execute the Docker command
-    exec(command, { timeout: 10000 }, (err, stdout, stderr) => {
-      if (err || stderr) {
-        console.error("Error executing Docker command:", err || stderr);
-        return res
-          .status(500)
-          .json({ message: "Failed to execute code", error: true });
-      }
-
-      console.timeEnd("Execution Time");
-
-      return res.status(200).json({
-        message: "Code executed successfully",
-        output: stdout,
-        error: stderr,
-      });
+            // Handle errors and output
+            if (error) return reject(`Error: ${error.message}`);
+            if (stderr) return reject(`Stderr: ${stderr}`);
+            resolve(stdout);
+        });
     });
-  } catch (error) {
-    console.error("An error occurred:", error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", error: true });
-  }
 };
+
+export { executeCode };
