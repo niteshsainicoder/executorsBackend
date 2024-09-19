@@ -21,6 +21,6 @@ app.get("/home", (req, res) => {
   res.send("hlo");
 });
 
-app.listen(3000, async () => {
+app.listen(3001, async () => {
   console.log(`server is running on  3000`);
 });
