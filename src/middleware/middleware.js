@@ -1,7 +1,6 @@
 const apiKeyMiddleware = (req, res, next) => {
     const api_Key = req.headers['x-api-key']; // Extract API key from headers
-    const validApiKey = process.env.API_KEY; // Access environment variable key
-console.log(api_Key,"                      ",validApiKey);
+    const validApiKey = process.env.API_KEY;
 
     // Check if the API key matches the stored valid API key
     if (validApiKey && validApiKey === api_Key) {
