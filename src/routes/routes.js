@@ -1,10 +1,11 @@
 import express from 'express';
 import { executeCode } from '../controllers/codeController.js';
 import { asynchandler } from '../utils/asyncHandler.js';
+import apiKeyMiddleware from '../middleware/middleware.js';
 
 const router = express.Router();
 
-router.post('/run', asynchandler(async (req, res) => {
+router.post('/run',apiKeyMiddleware, asynchandler(async (req, res) => {
     const { language, codeContent, args = [] } = req.body;
 
     if (!language || !codeContent) {

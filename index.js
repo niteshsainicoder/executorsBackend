@@ -1,9 +1,9 @@
+import "dotenv/config";
 import routes from "./src/routes/routes.js";
 import express from "express";
 const app = express();
 
-
- app.use(express.json());
+app.use(express.json());
 
 // Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
