@@ -6,7 +6,7 @@ import cors from "cors";
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://remote-code.vercel.app",
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
   })
