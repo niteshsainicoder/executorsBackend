@@ -24,9 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", routes);
 
 // Test route
-app.get("/home", (req, res) => {
+app.get("/", (req, res) => {
   console.log("Home route accessed");
-  res.send("Hello, world!");
+  res.status(200).send("Hello, world!");
 });
 
 // Error handling middleware
