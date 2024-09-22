@@ -17,7 +17,7 @@ const executeCode = async (language, code) => {
     TEMP_DIR,
     `temp.${language === "python" ? "py" : "js"}`
   );
-  await fs.writeFile(tempFile, code);
+  await fs.writeFile(tempFile,{content:`${console.time("Execution Time")} ${code} ${console.timeEnd("Execution Time")}`});
 
   // Define the command based on the language
   const command =
