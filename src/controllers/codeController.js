@@ -17,7 +17,9 @@ const executeCode = async (language, code) => {
     TEMP_DIR,
     `temp.${language === "python" ? "py" : "js"}`
   );
-  await fs.writeFile(tempFile,{content:`${console.time("Execution Time")} ${code} ${console.timeEnd("Execution Time")}`});
+  
+  // Write the code to a temporary file
+  await fs.writeFile(tempFile, code);
 
   // Define the command based on the language
   const command =
@@ -27,18 +29,27 @@ const executeCode = async (language, code) => {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(
       () => reject(new Error("Execution timed out")),
-      15000
-    ); // 15 seconds timeout
+      15000 // 15 seconds timeout
+    );
+
+    // Start timing
+    const startTime = process.hrtime();
 
     exec(command, (error, stdout, stderr) => {
       clearTimeout(timeout);
 
+      // Calculate execution time
+      const [seconds, nanoseconds] = process.hrtime(startTime);
+      const executionTime = seconds + nanoseconds / 1e9; // Convert to seconds
+
       // Handle errors and output
       if (error) return reject(`Error: ${error.message}`);
       if (stderr) return reject(`Stderr: ${stderr}`);
-      fs.writeFile(tempFile, "");
 
-      resolve(stdout);
+      // Clean up the temporary file
+      fs.unlink(tempFile).catch(console.error);
+
+      resolve({ stdout, executionTime });
     });
   });
 };
