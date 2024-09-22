@@ -27,8 +27,8 @@ const executeCode = async (language, code) => {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(
       () => reject(new Error("Execution timed out")),
-      10000
-    ); // 10 seconds timeout
+      15000
+    ); // 15 seconds timeout
 
     exec(command, (error, stdout, stderr) => {
       clearTimeout(timeout);
